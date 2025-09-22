@@ -1,0 +1,13 @@
+# Data options
+data_opt:
+    # Dataset domains
+    domain_source: null
+    domain_target: null
+model_opt:
+    method: null
+train_opt:
+    cv_gene: 5
+    cv_sample: 1
+    log_dir: null
+    target_fold_gene: null
+    target_fold_sample: null

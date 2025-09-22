@@ -1,0 +1,14 @@
+model_opt:
+    method: 'gimvi'
+train_opt:
+    cv_gene: 5
+    cv_sample: 1
+    log_dir: 'results_gimvi/osmfish2allenvisp'
+    device: 'cuda:0'
+# Data options
+data_opt:
+    # Dataset domains
+    domain_source: "osmfish"
+    domain_target: "allen_visp"
+    gene_selection_count_source: 1000
+    gene_selection_count_target: 2000
