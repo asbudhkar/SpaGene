@@ -77,7 +77,7 @@ if __name__ == '__main__':
     # Load experiment settings
     print('Loading experiment settings...')
     base_dir = os.path.dirname(__file__)
-    data_dir = os.path.join(base_dir, '../beanfur/gene_exp/gene_exp_private/data/paired_datasets')
+    data_dir = os.path.join(base_dir, 'data/paired_datasets')
 
     args = get_args().parse_args()
     opts = yaml.safe_load(open(os.path.join(base_dir, 'options', 'base.yaml')))
