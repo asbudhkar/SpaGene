@@ -1,0 +1,8 @@
+model_opt:
+    method: 'gimvi'
+train_opt:
+    log_dir: 'results_gimvi/nano2gse'
+    device: 'cuda'
+data_opt:
+    domain_source: "nanostring"
+    domain_target: "gse"

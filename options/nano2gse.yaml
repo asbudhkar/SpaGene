@@ -1,0 +1,6 @@
+train_opt:
+    device: 'cuda'
+    log_dir: 'results/nano2gse'
+data_opt:
+    domain_source: 'nanostring'
+    domain_target: 'gse'
