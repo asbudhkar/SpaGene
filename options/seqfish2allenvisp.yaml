@@ -1,0 +1,6 @@
+train_opt:
+    device: 'cuda'
+    log_dir: 'results/seqfish2allenvisp'
+data_opt:
+    domain_source: 'seqfish'
+    domain_target: 'allen_visp'

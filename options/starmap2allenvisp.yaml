@@ -1,0 +1,8 @@
+train_opt:
+    device: 'cuda'
+    log_dir: 'results/starmap2allenvisp'
+    knn_topology_every: 1
+    knn_topology_max_cells: null
+data_opt:
+    domain_source: 'starmap'
+    domain_target: 'allen_visp'

@@ -1,0 +1,7 @@
+model_opt:
+    method: 'spage'
+train_opt:
+    log_dir: 'results_spage/nano2gse'
+data_opt:
+    domain_source: "nanostring"
+    domain_target: "gse"

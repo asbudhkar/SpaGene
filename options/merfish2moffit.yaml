@@ -1,0 +1,6 @@
+train_opt:
+    device: 'cuda'
+    log_dir: 'results/merfish2moffit'
+data_opt:
+    domain_source: 'merfish'
+    domain_target: 'moffit'

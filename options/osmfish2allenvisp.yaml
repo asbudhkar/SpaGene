@@ -1,0 +1,6 @@
+train_opt:
+    device: 'cuda'
+    log_dir: 'results/osmfish2allenvisp'
+data_opt:
+    domain_source: 'osmfish'
+    domain_target: 'allen_visp'
