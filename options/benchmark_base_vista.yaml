@@ -1,0 +1,8 @@
+model_opt:
+    method: 'vista'
+train_opt:
+    log_dir: 'results_vista/nano2gse'
+    device: 'cuda'
+data_opt:
+    domain_source: "nanostring"
+    domain_target: "gse"

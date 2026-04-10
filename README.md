@@ -100,8 +100,13 @@ tqdm==4.66.5
 ├── results
 ├── results_gimvi
 ├── results_spage
+├── results_vista
+├── results_stdiff
+├── results_sprefine
+├── results_tangram
 ├── requirements.txt
 ├── generate_benchmark.py
+├── generate_benchmark_stdiff.py
 ├── train.py
 ```
 ## Installation
@@ -116,6 +121,10 @@ git clone https://github.com/asbudhkar/SpaGene
 The dataset can be downloaded [here](https://nanostring.com/products/cosmx-spatial-molecular-imager/ffpe-dataset/)
 ### GSE
 The dataset can be downloaded [here](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE131907)
+### Xenium breast
+The dataset can be downloaded [here](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSM7780153)
+### GSE breast
+The dataset can be downloaded [here](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE243280)
 ### MERFISH, Moffit, osmFISH, AllenSSp, AllenVISp, Zeisel, seqFISH, STARmap
 The datasets can be download from public repository [here](https://zenodo.org/records/3967291)
 
@@ -152,6 +161,10 @@ python3 train.py --exp seqfish2allenvisp
 ```
 python3 train.py --exp starmap2allenvisp
 ```
+#### 8. Xenium Breast GSE Breast
+```
+python3 train.py --exp xenium_breast
+```
 
 ## Benchmarking
 
@@ -163,10 +176,43 @@ python3 generate_benchmark.py --exp benchmark_base_gimvi
 ```
 python3 generate_benchmark.py --exp benchmark_base_spage
 ```
+#### 3. VISTA
+```
+python3 generate_benchmark.py --exp benchmark_base_vista
+```
+#### 4. stDiff
+```
+python3 generate_benchmark_stdiff.py --exp benchmark_base_stdiff
+```
+#### 5. spRefine
+```
+python3 generate_benchmark.py --exp benchmark_base_sprefine
+```
+#### 6. Tangram
+```
+python3 generate_benchmark.py --exp benchmark_base_tangram
+```
+
+To run these baselines, clone their repositories into `third_party/`:
+
+```
+third_party/VISTA
+third_party/sprefine
+third_party/stDiff
+```
+
+Upstream repositories:
+
+```
+VISTA: https://github.com/HelloWorldLTY/VISTA
+spRefine: https://github.com/HelloWorldLTY/sprefine
+stDiff: https://github.com/fdu-wangfeilab/stDiff
+```
+
+For `sprefine`, set `train_opt.sprefine_gene_emb_path` in the YAML before running.
 ## Tutorial
 [here](https://github.com/asbudhkar/SpaGene/blob/main/SpaGene_tutorial.ipynb)
 
 ## Cite
 
 Please cite our paper if you use this code in your own work
-

@@ -1,4 +1,5 @@
 from codes.data_utils import load_dataframe, process_dataframe
+from codes.benchmark_utils import run_vista, run_sprefine, run_stdiff
 import yaml, os, argparse, json, numpy as np, pandas as pd, scanpy as sc
 from skimage.metrics import structural_similarity as ssim
 import scipy.stats as st
@@ -49,7 +50,7 @@ if __name__ == '__main__':
     print('Loading experiment settings...')
     # Define path setting
     base_dir = os.path.dirname(__file__)
-    data_dir = os.path.join(base_dir, '../beanfur/gene_exp/gene_exp_private/data/paired_datasets')
+    data_dir = os.path.join(base_dir, 'data/paired_datasets')
 
     # Define user-defined experiment settings
     parser = get_args()
@@ -165,7 +166,7 @@ if __name__ == '__main__':
                 }
             }
 
-            # SPAGE
+            # SpaGE
             if model_opt['method'] == 'spage':
                 print('Running SpaGE')
                 n_pv = int(train_opt.get("spage_n_pv"))
@@ -179,7 +180,7 @@ if __name__ == '__main__':
                 pred = ImpGene.loc[:, gene_exp_test]
                 real = dict_df['source']['train'].loc[:, gene_exp_test]
 
-            # GIMVI
+            # gimVI
             if model_opt['method'] == 'gimvi':
                 print('Running GIMVI')
                 source_data = sc.AnnData(dict_df['source']['train'].loc[:, gene_exp_inter].drop(columns=gene_exp_test))
@@ -207,7 +208,43 @@ if __name__ == '__main__':
                 ).loc[:, gene_exp_test]
                 real = dict_df['source']['train'].loc[:, gene_exp_test]
 
-            # TANGRAM
+            # VISTA
+            if model_opt['method'] == 'vista':
+                print('Running VISTA')
+                pred, real = run_vista(
+                    dict_df['source']['train'],
+                    dict_df['target']['train'],
+                    gene_exp_input_source,
+                    gene_exp_test,
+                    train_opt,
+                    coords=None,
+                )
+                pred = np.sqrt(np.clip(pred, a_min=0.0, a_max=None)).astype(np.float32)
+                real = np.sqrt(np.clip(real, a_min=0.0, a_max=None)).astype(np.float32)
+
+            # stDiff
+            if model_opt['method'] == 'stdiff':
+                print('Running STDiff')
+                df_source_stdiff = dict_df['source']['train'].loc[:, gene_exp_inter]
+                df_target_stdiff = dict_df['target']['train'].loc[:, gene_exp_inter]
+                full_pred = run_stdiff(df_source_stdiff, df_target_stdiff, train_opt)
+                pred = full_pred.loc[df_source_stdiff.index.astype(str), gene_exp_test]
+                real = df_source_stdiff.copy()
+                real.index = real.index.astype(str)
+                real = real.loc[pred.index, gene_exp_test]
+
+            # spRefine
+            if model_opt['method'] == 'sprefine':
+                print('Running SPRefine')
+                observed_genes = [g for g in gene_exp_input_source if g in dict_df['source']['train'].columns]
+                pred, real = run_sprefine(
+                    dict_df['source']['train'],
+                    observed_genes,
+                    gene_exp_test,
+                    train_opt,
+                )
+
+            # Tangram
             if model_opt['method'] == 'tangram':
                 print('Running Tangram (true gene holdout)')
 

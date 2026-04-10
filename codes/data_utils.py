@@ -1,6 +1,35 @@
 import torch
 import torchvision.transforms.functional as TF
 import os, pickle, numpy as np, pandas as pd, scanpy as sc
+import h5py
+from scipy import sparse
+
+
+def _read_10x_h5_dataframe(file_path, feature_type="Gene Expression"):
+    with h5py.File(file_path, "r") as f:
+        matrix = f["matrix"]
+        shape = tuple(int(x) for x in matrix["shape"][:])
+        data = matrix["data"][:]
+        indices = matrix["indices"][:]
+        indptr = matrix["indptr"][:]
+        barcodes = [x.decode() if isinstance(x, bytes) else str(x) for x in matrix["barcodes"][:]]
+        feature_names = [x.decode() if isinstance(x, bytes) else str(x) for x in matrix["features"]["name"][:]]
+        feature_types = [
+            x.decode() if isinstance(x, bytes) else str(x)
+            for x in matrix["features"]["feature_type"][:]
+        ]
+
+    mat = sparse.csc_matrix((data, indices, indptr), shape=shape).transpose().tocsr()
+    if feature_type is not None:
+        keep = np.array([ft == feature_type for ft in feature_types], dtype=bool)
+        mat = mat[:, keep]
+        feature_names = [g for g, k in zip(feature_names, keep) if k]
+
+    df = pd.DataFrame.sparse.from_spmatrix(mat, index=barcodes, columns=feature_names)
+    df = df.sparse.to_dense()
+    if df.columns.has_duplicates:
+        df = df.T.groupby(level=0, sort=False).sum().T
+    return df.astype(np.float32)
 
 def load_dataframe(source_name, data_dir, file_format = 'pickle'):
     def load(file_path):
@@ -29,6 +58,12 @@ def load_dataframe(source_name, data_dir, file_format = 'pickle'):
         file_path = os.path.join(data_dir, source_name, 'Moffit_data_SC.' + suffix)
     elif source_name == 'zeisel':
         file_path = os.path.join(data_dir, source_name, 'Zeisel_data_SC.' + suffix)
+    elif source_name == 'gse243275_raw':
+        file_path = '/data2/abudhkar/data/GSE243275_RAW/GSM7782696_5p_count_filtered_feature_bc_matrix.h5'
+        return _read_10x_h5_dataframe(file_path)
+    elif source_name == 'xenium_rep1':
+        file_path = '/data2/abudhkar/data/xenium_rep1/outs/cell_feature_matrix.h5'
+        return _read_10x_h5_dataframe(file_path)
     return load(file_path).astype(np.float32)
 
 def process_dataframe(df, min_count_gene, min_count_cell, min_density_gene, min_density_cell, gene_selection_count, clip_outlier, normalization, genes_to_keep = None):
